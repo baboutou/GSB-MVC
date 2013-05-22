@@ -23,7 +23,7 @@ function getLesIdFraisForfait($pdo)
 }
 function getDernierMois($pdo, $idVisiteur)
 {
-		$req = "select max(mois) as dernierMois from fichefrais where idVisiteur = '$idVisiteur'";
+		$req = "select max(mois) as DERNIERMOIS from fichefrais where idVisiteur = '$idVisiteur'";
 		$res = $pdo->query($req);
 		$laLigne = $res->fetch();
 		return $laLigne['DERNIERMOIS'];
@@ -94,8 +94,14 @@ function creationFichesFrais($pdo)
 			$dateModif = $numAnnee."-".$numMois."-".rand(1,8);
 			$nbJustificatifs = rand(0,12);
 			$req = "insert into fichefrais(idvisiteur,mois,nbJustificatifs,montantValide,dateModif,idEtat) 
-			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,'$dateModif','$etat')";
-			$pdo->exec($req);
+			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,to_date('$dateModif','yyyy-mm-dd') ,'$etat')";
+                        //echo $req."<br/>";
+                        if (!$pdo->exec($req))
+                        {
+                            echo $req."<br/>";
+                        }
+			//$pdo->exec($req);
+                        
 			$moisCourant = getMoisPrecedent($moisCourant);
 			$n++;
 		}
@@ -121,8 +127,8 @@ function creationFraisForfait($pdo)
 				$quantite =rand(2,20);
 			}
 			$req = "insert into lignefraisforfait(idvisiteur,mois,idfraisforfait,quantite)
-			values('$idVisiteur','$mois','$idFraisForfait',$quantite);";
-			$pdo->exec($req);	
+			values('$idVisiteur','$mois','$idFraisForfait',$quantite)";
+			//$pdo->exec($req);	
 		}
 	}
 
@@ -213,9 +219,9 @@ function creationFraisHorsForfait($pdo)
 		{
 			$hasardNumfrais = rand(1,count($desFrais)); 
 			$frais = $desFrais[$hasardNumfrais];
-			$lib = $frais['LIB'];
-			$min= $frais['MIN'];
-			$max = $frais['MAX'];
+			$lib = $frais['lib'];
+			$min= $frais['min'];
+			$max = $frais['max'];
 			$hasardMontant = rand($min,$max);
 			$numAnnee =substr( $mois,0,4);
 			$numMois =substr( $mois,4,2);

@@ -26,7 +26,7 @@ function getDernierMois($pdo, $idVisiteur)
 		$req = "select max(mois) as dernierMois from fichefrais where idVisiteur = '$idVisiteur'";
 		$res = $pdo->query($req);
 		$laLigne = $res->fetch();
-		return $laLigne['dernierMois'];
+		return $laLigne['DERNIERMOIS'];
 
 }
 function getMoisSuivant($mois){
@@ -67,7 +67,7 @@ function creationFichesFrais($pdo)
 	foreach($lesVisiteurs as $unVisiteur)
 	{
 		$moisCourant = $moisFin;
-		$idVisiteur = $unVisiteur['id'];
+		$idVisiteur = $unVisiteur['ID'];
 		$n = 1;
 		while($moisCourant >= $moisDebut)
 		{
@@ -94,7 +94,7 @@ function creationFichesFrais($pdo)
 			$dateModif = $numAnnee."-".$numMois."-".rand(1,8);
 			$nbJustificatifs = rand(0,12);
 			$req = "insert into fichefrais(idvisiteur,mois,nbJustificatifs,montantValide,dateModif,idEtat) 
-			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,'$dateModif','$etat');";
+			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,'$dateModif','$etat')";
 			$pdo->exec($req);
 			$moisCourant = getMoisPrecedent($moisCourant);
 			$n++;
@@ -107,11 +107,11 @@ function creationFraisForfait($pdo)
 	$lesIdFraisForfait = getLesIdFraisForfait($pdo);
 	foreach($lesFichesFrais as $uneFicheFrais)
 	{
-		$idVisiteur = $uneFicheFrais['idVisiteur'];
-		$mois =  $uneFicheFrais['mois'];
+		$idVisiteur = $uneFicheFrais['IDVISITEUR'];
+		$mois =  $uneFicheFrais['MOIS'];
 		foreach($lesIdFraisForfait as $unIdFraisForfait)
 		{
-			$idFraisForfait = $unIdFraisForfait['id'];
+			$idFraisForfait = $unIdFraisForfait['ID'];
 			if(substr($idFraisForfait,0,1)=="K")
 			{
 				$quantite =rand(300,1000);
@@ -186,7 +186,7 @@ function updateMdpVisiteur($pdo)
 		foreach($lesLignes as $unVisiteur)
 		{
 			$mdp = "";
-			$id = $unVisiteur['id'];
+			$id = $unVisiteur['ID'];
 			for($i =1;$i<=5;$i++)
 			{
 				$uneLettrehasard = substr( $lettres,rand(33,1),1);
@@ -206,16 +206,16 @@ function creationFraisHorsForfait($pdo)
 	
 	foreach($lesFichesFrais as $uneFicheFrais)
 	{
-		$idVisiteur = $uneFicheFrais['idVisiteur'];
-		$mois =  $uneFicheFrais['mois'];
+		$idVisiteur = $uneFicheFrais['IDVISITEUR'];
+		$mois =  $uneFicheFrais['MOIS'];
 		$nbFrais = rand(0,5);
 		for($i=0;$i<=$nbFrais;$i++)
 		{
 			$hasardNumfrais = rand(1,count($desFrais)); 
 			$frais = $desFrais[$hasardNumfrais];
-			$lib = $frais['lib'];
-			$min= $frais['min'];
-			$max = $frais['max'];
+			$lib = $frais['LIB'];
+			$min= $frais['MIN'];
+			$max = $frais['MAX'];
 			$hasardMontant = rand($min,$max);
 			$numAnnee =substr( $mois,0,4);
 			$numMois =substr( $mois,4,2);
@@ -226,7 +226,7 @@ function creationFraisHorsForfait($pdo)
 			}
 			$hasardMois = $numAnnee."-".$numMois."-".$hasardJour;
 			$req = "insert into lignefraishorsforfait(idVisiteur,mois,libelle,date,montant)
-			values('$idVisiteur','$mois','$lib','$hasardMois',$hasardMontant);";
+			values('$idVisiteur','$mois','$lib','$hasardMois',$hasardMontant)";
 			$pdo->exec($req);
 		}
 	}
@@ -244,22 +244,22 @@ function majFicheFrais($pdo)
 	$lesFichesFrais= getLesFichesFrais($pdo);
 	foreach($lesFichesFrais as $uneFicheFrais)
 	{
-		$idVisiteur = $uneFicheFrais['idVisiteur'];
-		$mois =  $uneFicheFrais['mois'];
+		$idVisiteur = $uneFicheFrais['IDVISITEUR'];
+		$mois =  $uneFicheFrais['MOIS'];
 		$dernierMois = getDernierMois($pdo, $idVisiteur);
 		$req = "select sum(montant) as cumul from ligneFraisHorsForfait where ligneFraisHorsForfait.idVisiteur = '$idVisiteur' 
 				and ligneFraisHorsForfait.mois = '$mois' ";
 		$res = $pdo->query($req);
 		$ligne = $res->fetch();
-		$cumulMontantHorsForfait = $ligne['cumul'];
+		$cumulMontantHorsForfait = $ligne['CUMUL'];
 		$req = "select sum(ligneFraisForfait.quantite * fraisForfait.montant) as cumul from ligneFraisForfait, FraisForfait where
 		ligneFraisForfait.idFraisForfait = fraisForfait.id   and   ligneFraisForfait.idVisiteur = '$idVisiteur' 
 				and ligneFraisForfait.mois = '$mois' ";
 		$res = $pdo->query($req);
 		$ligne = $res->fetch();
-		$cumulMontantForfait = $ligne['cumul'];
+		$cumulMontantForfait = $ligne['CUMUL'];
 		$montantEngage = $cumulMontantHorsForfait + $cumulMontantForfait;
-		$etat = $uneFicheFrais['idEtat'];
+		$etat = $uneFicheFrais['IDETAT'];
 		if($etat == "CR" )
 			$montantValide = 0;
 		else

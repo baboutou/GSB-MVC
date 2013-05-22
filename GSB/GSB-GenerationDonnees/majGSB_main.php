@@ -16,8 +16,8 @@ $pdo = new PDO($serveur, $user, $mdp);
 $pdo->query("SET CHARACTER SET utf8"); 
 
 set_time_limit(0);
-//creationFichesFrais($pdo);
-creationFraisForfait($pdo);
+creationFichesFrais($pdo);
+//creationFraisForfait($pdo);
 //creationFraisHorsForfait($pdo);
 //majFicheFrais($pdo);
 

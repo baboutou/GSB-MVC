@@ -95,7 +95,7 @@ function creationFichesFrais($pdo)
 			$nbJustificatifs = rand(0,12);
 			$req = "insert into fichefrais(idvisiteur,mois,nbJustificatifs,montantValide,dateModif,idEtat) 
 			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,to_date('$dateModif','yyyy-mm-dd') ,'$etat')";
-                        //echo $req."<br/>";
+                        echo $req."<br/>";
                         //if (!$pdo->exec($req))
                         //{
                             //echo $req."<br/>";
@@ -132,7 +132,7 @@ function creationFraisForfait($pdo)
                         
                         echo $req."<br/>";
                         
-			//$pdo->exec($req);	
+			$pdo->exec($req);	
 		}
 	}
 

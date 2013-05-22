@@ -94,14 +94,9 @@ function creationFichesFrais($pdo)
 			$dateModif = $numAnnee."-".$numMois."-".rand(1,8);
 			$nbJustificatifs = rand(0,12);
 			$req = "insert into fichefrais(idvisiteur,mois,nbJustificatifs,montantValide,dateModif,idEtat) 
-			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,to_date('$dateModif','yyyy-mm-dd') ,'$etat')";
-                        echo $req."<br/>";
-                        //if (!$pdo->exec($req))
-                        //{
-                            //echo $req."<br/>";
-                        //}
-			//$pdo->exec($req);
-                        
+			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,'$dateModif','$etat')";
+                        //echo $req."<br/>";
+			$pdo->exec($req);
 			$moisCourant = getMoisPrecedent($moisCourant);
 			$n++;
 		}
@@ -128,11 +123,10 @@ function creationFraisForfait($pdo)
 			}
 			$req = "insert into lignefraisforfait(idvisiteur,mois,idfraisforfait,quantite)
 			values('$idVisiteur','$mois','$idFraisForfait',$quantite)";
+                        //echo $req."<br/>";
+                        $pdo->exec($req);
                         
-                        
-                        echo $req."<br/>";
-                        
-			$pdo->exec($req);	
+			
 		}
 	}
 
@@ -204,7 +198,8 @@ function updateMdpVisiteur($pdo)
 			}
 			
 			$req = "update visiteur set mdp ='$mdp' where visiteur.id ='$id' ";
-			$pdo->exec($req);
+                        echo $req;
+			//$pdo->exec($req);
 		}
 
 
@@ -223,9 +218,9 @@ function creationFraisHorsForfait($pdo)
 		{
 			$hasardNumfrais = rand(1,count($desFrais)); 
 			$frais = $desFrais[$hasardNumfrais];
-			$lib = $frais['lib'];
-			$min= $frais['min'];
-			$max = $frais['max'];
+			$lib = $frais['LIB'];
+			$min= $frais['MIN'];
+			$max = $frais['MAX'];
 			$hasardMontant = rand($min,$max);
 			$numAnnee =substr( $mois,0,4);
 			$numMois =substr( $mois,4,2);
@@ -269,7 +264,7 @@ function majFicheFrais($pdo)
 		$ligne = $res->fetch();
 		$cumulMontantForfait = $ligne['CUMUL'];
 		$montantEngage = $cumulMontantHorsForfait + $cumulMontantForfait;
-		$etat = $uneFicheFrais['IDETAT'];
+		$etat = $uneFicheFrais['ID'];
 		if($etat == "CR" )
 			$montantValide = 0;
 		else

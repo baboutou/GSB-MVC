@@ -96,10 +96,10 @@ function creationFichesFrais($pdo)
 			$req = "insert into fichefrais(idvisiteur,mois,nbJustificatifs,montantValide,dateModif,idEtat) 
 			values ('$idVisiteur','$moisCourant',$nbJustificatifs,0,to_date('$dateModif','yyyy-mm-dd') ,'$etat')";
                         //echo $req."<br/>";
-                        if (!$pdo->exec($req))
-                        {
-                            echo $req."<br/>";
-                        }
+                        //if (!$pdo->exec($req))
+                        //{
+                            //echo $req."<br/>";
+                        //}
 			//$pdo->exec($req);
                         
 			$moisCourant = getMoisPrecedent($moisCourant);
@@ -128,6 +128,10 @@ function creationFraisForfait($pdo)
 			}
 			$req = "insert into lignefraisforfait(idvisiteur,mois,idfraisforfait,quantite)
 			values('$idVisiteur','$mois','$idFraisForfait',$quantite)";
+                        
+                        
+                        echo $req."<br/>";
+                        
 			//$pdo->exec($req);	
 		}
 	}
